@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+
+; Power throttling off — prevents background process throttling stutter
+; Source: ReduceInputDelay delay.reg (one of two GOOD changes in that file)
+; Registry: HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling\PowerThrottlingOff
+; Value 1 = throttling disabled. Default = key absent (Windows controls).
+; Revert: delete the PowerThrottlingOff value
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling]
+"PowerThrottlingOff"=dword:00000001

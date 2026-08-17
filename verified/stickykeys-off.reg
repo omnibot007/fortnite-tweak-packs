@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+
+; StickyKeys off — prevents match-ending input interruption from Shift 5x
+; Source: MaxxTopia KEEP-CORE (not from the packs, but surfaced during audit)
+; Registry: HKCU\Control Panel\Accessibility\StickyKeys\Flags
+; Value 506 = stickykeys shortcut disabled. Default 510 = Windows default.
+; Revert: set back to 510
+
+[HKEY_CURRENT_USER\Control Panel\Accessibility\StickyKeys]
+"Flags"="506"

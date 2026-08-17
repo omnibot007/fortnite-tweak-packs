@@ -1,0 +1,11 @@
+Windows Registry Editor Version 5.00
+
+; Audio ducking off — stops Windows dropping game audio 80% on voice chat
+; Source: Peterbot Delay8.reg (the only GOOD file in that pack)
+; Independently confirmed by MaxxTopia efficacy audit (KEEP-CORE tier)
+; Registry: HKCU\SOFTWARE\Microsoft\Multimedia\Audio\UserDuckingPreference
+; Value 3 = ducking disabled. Default 0 = Windows controls ducking.
+; Revert: set back to 0
+
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\Multimedia\Audio]
+"UserDuckingPreference"=dword:00000003

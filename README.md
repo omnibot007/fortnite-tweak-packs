@@ -129,6 +129,10 @@ Of all 36 files, only two changes have a documented, measured effect:
 1. **Peterbot Delay8.reg** — `UserDuckingPreference=3` disables Windows audio ducking during voice chat. This is the same tweak as MaxxTopia's `audio.comms-ducking.disable`, independently confirmed as a real competitive-audio win.
 2. **ReduceInputDelay delay.reg** — `GameDVR_Enabled=0` disables Windows Game DVR background recording. Real, modest stutter reduction. (Already applied on the target machine.)
 
+These plus StickyKeys off (surfaced during the audit from MaxxTopia's KEEP-CORE list)
+have been extracted as clean .reg files in the [`verified/`](verified/) folder.
+See [`verified/README.md`](verified/README.md) for usage.
+
 Everything else is either:
 - Security-reducing (UAC off, Windows Update off, Spectre mitigations off)
 - Placebo (VxD BIOS keys, GameFluidity, GPU Priority=8, MSMQ TCPNoDelay)
