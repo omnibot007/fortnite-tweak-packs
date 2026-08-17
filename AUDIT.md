@@ -35,13 +35,45 @@ This is **malware delivery behavior**:
 
 ## Per-file verdicts
 
-### Aphrodite (3 files) — ALL HARMFUL/UNAUDITABLE
+### Aphrodite (3 files) — ALL HARMFUL/UNAUDITABLE (but contain 4 good tweaks buried inside)
 
 | File | Verdict | Why |
 |---|---|---|
 | `Aphrodite_Zero_Delay.bat` | **UNAUDITABLE / HARMFUL** | 1.7MB obfuscated. Downloads dmv.exe + PowerRun.exe from Discord. Cannot determine what it does. |
-| `Aphrodite_Aim_Assist_Enhancing.bat` | **HARMFUL** | Downloads dmv.exe + PowerRun.exe from Discord. Then runs ~300+ registry changes including: csrss.exe CPU priority (IFEO), TCP DelayedAck, disables webcam/mic for UWP apps, disables Narrator/StickyKeys/accessibility, disables push notifications, disables Remote Assistance, changes DWM accent colors, disables Prefetcher, opens Discord invite. Most changes are irrelevant to Fortnite. Name suggests aim assist modification = anti-cheat risk. |
+| `Aphrodite_Aim_Assist_Enhancing.bat` | **HARMFUL** | 748 lines, ~300+ registry changes. Downloads dmv.exe + PowerRun.exe from Discord. Disables UAC (`EnableLUA=0`), disables Spectre/Meltdown mitigations (`FeatureSettingsOverride=3`), blocks driver updates, disables Prefetcher, uninstalls OneDrive, opens Discord invite. Also contains ~30 webcam/mic deny changes, Narrator/accessibility disables, DWM accent color changes, push notification disables — none performance-related. BUT: buried among the harmful changes are 4 good tweaks (Fast Startup off, Game Bar off, accessibility shortcut keys off) extracted to `verified/`. Name suggests aim assist modification = anti-cheat risk. |
 | `Aphrodite_Shotgun_Registration.bat` | **HARMFUL** | Downloads dmv.exe + PowerRun.exe from Discord. Then sets TCP ServiceProvider priorities (DNS resolution ordering — minimal effect on game ping). Opens Discord invite. "Shotgun registration" is server-side; client registry changes cannot affect it. |
+
+#### Aphrodite Aim Assist .bat — full breakdown of ~300 registry changes
+
+| Category | Count | Verdict |
+|---|---|---|
+| Malware download (dmv.exe + PowerRun.exe from Discord) | 2 curl commands | **HARMFUL** |
+| UAC disable (`EnableLUA=0`, `ConsentPromptBehaviorAdmin=0`, `PromptOnSecureDesktop=0`) | 4 | **HARMFUL** |
+| Spectre/Meltdown mitigations off (`FeatureSettingsOverride=3`) | 2 | **HARMFUL** |
+| Driver updates blocked (`ExcludeWUDriversInQualityUpdate=1`) | 5 | **HARMFUL** |
+| Prefetcher disabled (`EnablePrefetcher=0`) | 1 | **HARMFUL** |
+| OneDrive uninstall | 1 | **HARMFUL** (destructive) |
+| Fast Startup off (`HiberbootEnabled=0`) | 1 | **GOOD** — extracted to verified/ |
+| Power throttling off (`PowerThrottlingOff=1`) | 1 | **GOOD** — already in verified/ |
+| GameDVR off (all keys) | 8 | **GOOD** — already in verified/ |
+| Game Bar off (`UseNexusForGameBarEnabled=0`) | 2 | **GOOD** — extracted to verified/ |
+| Game Mode ON (`AllowAutoGameMode=1`, `AutoGameModeEnabled=1`) | 2 | **GOOD** but already default |
+| StickyKeys/ToggleKeys/FilterKeys shortcuts off | 4 | **GOOD** — extracted to verified/ |
+| MMCSS tweaks (NetworkThrottlingIndex, SystemResponsiveness, GPU Priority=8) | 8 | **PLACEBO** — only affects MMCSS threads |
+| TCP/AFD buffer tweaks (DelayedAck, CongestionAlgorithm, FastCopy, etc.) | 14 | **PLACEBO** — TCP only, Fortnite is UDP |
+| TCP ServiceProvider priorities (DNS ordering) | 8 (duplicated 3x) | **PLACEBO** — doesn't affect in-match ping |
+| `Win32PrioritySeparation=38` | 1 | **PLACEBO** — that's the stock value |
+| Webcam/mic deny for UWP apps | ~30 | Privacy, not performance |
+| Narrator/accessibility disables | ~25 | QoL, not performance |
+| DWM accent color changes | 7 | Cosmetic, not performance |
+| Push notifications off | 3 | QoL, not performance |
+| Remote Assistance off | 2 | Security, not performance |
+| Maps auto-update off | 1 | QoL, not performance |
+| Consumer features off | 1 | QoL, not performance |
+| Device metadata from network off | 1 | QoL, not performance |
+| Auto maintenance off | 1 | **MARGINAL** — Windows already defers when gaming |
+| `DisableAutomaticRestartSignOn=1` | 1 | **MARGINAL** |
+| Discord invite opened in browser | 1 | Social engineering |
 
 ### Peterbot (23 files) — MOSTLY HARMFUL OR PLACEBO
 
@@ -109,13 +141,13 @@ This is **malware delivery behavior**:
 
 | Verdict | Count | Files |
 |---|---|---|
-| **GOOD** | 2 | Peterbot Delay8 (audio ducking off), ReduceInputDelay delay.reg PowerThrottlingOff |
+| **GOOD** | 6 | Peterbot Delay8 (audio ducking off), ReduceInputDelay delay.reg (PowerThrottlingOff + GameDVR off), Aphrodite Aim Assist .bat (Fast Startup off, Game Bar off, accessibility shortcuts off — extracted, not run from .bat) |
 | **MARGINAL** | 10 | Delay3, Delay7, Delay11, Delay16, Delay20, Delay22, Delay23, delay.reg kill timeouts, delay.reg maintenance off, delay.reg menu delay |
 | **PLACEBO** | 14 | Delay2, Delay4, Delay12, Delay13, Delay14, Delay15, Delay17, Delay18, Delay19, Delay21, 2_Ping_Reduction_Strong, FPS, fcshotgun, OverallShotGun, shakey_best_input |
 | **HARMFUL** | 9 | Delay1, Delay5, Delay6, Delay9, Delay10, delayy, ReduceInputDelay, delay.reg hibernation off, all 3 Aphrodite .bat files |
 | **UNAUDITABLE** | 2 | Aphrodite_Zero_Delay.bat, InternetBooster.exe |
 
-**Score: 2 good out of 36 files. 5.6% hit rate.**
+**Score: 6 good tweaks extracted from 36 files.** The Aphrodite .bat files are still HARMFUL to run (they download malware), but 4 good tweaks were buried inside and extracted to `verified/`.
 
 ---
 

@@ -1,0 +1,18 @@
+Windows Registry Editor Version 5.00
+
+; Accessibility shortcut keys off — prevents match-ending input interruptions
+; Source: appears in Aphrodite Aim Assist .bat (but that file also downloads malware — do NOT run it)
+; These disable the keyboard shortcuts that can pop up dialogs mid-match:
+;   StickyKeys  — Shift 5x       (already in stickykeys-off.reg, included here for completeness)
+;   ToggleKeys  — Num Lock 5x    (Flags=34 = shortcut off, keeps notification)
+;   FilterKeys  — Right Shift 8s (Flags=2 = shortcut off)
+; Revert: StickyKeys=510, ToggleKeys=58, Keyboard Response=126
+
+[HKEY_CURRENT_USER\Control Panel\Accessibility\StickyKeys]
+"Flags"="506"
+
+[HKEY_CURRENT_USER\Control Panel\Accessibility\ToggleKeys]
+"Flags"="34"
+
+[HKEY_CURRENT_USER\Control Panel\Accessibility\Keyboard Response]
+"Flags"="2"

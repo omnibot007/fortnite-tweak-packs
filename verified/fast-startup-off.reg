@@ -1,0 +1,12 @@
+Windows Registry Editor Version 5.00
+
+; Fast Startup off — stutter/stability hygiene
+; Source: appears in Aphrodite Aim Assist .bat (but that file also downloads malware — do NOT run it)
+; Independently confirmed by MaxxTopia KEEP-CORE: "power.fast-startup.disable — stutter/stability hygiene"
+; Registry: HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power\HiberbootEnabled
+; Value 0 = Fast Startup disabled (keeps hibernation available, unlike powercfg /hibernate off).
+; Default 1 = Fast Startup enabled (can cause stale driver state on boot).
+; Revert: set back to 1
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power]
+"HiberbootEnabled"=dword:00000000

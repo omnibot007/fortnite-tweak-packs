@@ -1,0 +1,12 @@
+Windows Registry Editor Version 5.00
+
+; Game Bar off — disables the Xbox Game Bar overlay
+; Source: appears in Aphrodite Aim Assist .bat (but that file also downloads malware — do NOT run it)
+; Registry: HKCU\Software\Microsoft\GameBar\UseNexusForGameBarEnabled
+; Value 0 = Game Bar disabled. Default 1 = enabled.
+; Pairs with gamedvr-off.reg for full Game Bar/DVR disable.
+; Revert: set back to 1
+
+[HKEY_CURRENT_USER\Software\Microsoft\GameBar]
+"UseNexusForGameBarEnabled"=dword:00000000
+"ShowStartupPanel"=dword:00000000
