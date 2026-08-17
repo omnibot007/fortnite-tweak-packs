@@ -1,0 +1,14 @@
+Windows Registry Editor Version 5.00
+
+; USB selective-suspend power management off
+; Source: MaxxTopia catalog (process.usb-power-mgmt.disable, mechanism tier)
+; Stops Windows from entering selective-suspend on USB hub devices.
+; Removes the 1-3ms wake stalls that hit when a sleeping USB controller
+; is needed mid-frame.
+; Registry: HKLM\SYSTEM\CurrentControlSet\Services\usbhub\Parameters\EnhancedPowerManagementEnabled
+; Value 0 = enhanced power management disabled. Default = key absent.
+; Reboot required: yes
+; Revert: delete the EnhancedPowerManagementEnabled value
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\usbhub\Parameters]
+"EnhancedPowerManagementEnabled"=dword:00000000

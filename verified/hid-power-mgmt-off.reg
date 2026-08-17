@@ -1,0 +1,14 @@
+Windows Registry Editor Version 5.00
+
+; HID power management off (mouse, keyboard, controllers)
+; Source: MaxxTopia catalog (process.hid-power-mgmt.disable, mechanism tier)
+; Companion to usb-power-mgmt-off.reg — covers HID-class devices at the
+; driver layer. Prevents Windows from power-managing your mouse/keyboard/
+;controller into a state that adds wake latency.
+; Registry: HKLM\SYSTEM\CurrentControlSet\Services\hidclass\Parameters\EnhancedPowerManagementEnabled
+; Value 0 = enhanced power management disabled. Default = key absent.
+; Reboot required: yes
+; Revert: delete the EnhancedPowerManagementEnabled value
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\hidclass\Parameters]
+"EnhancedPowerManagementEnabled"=dword:00000000

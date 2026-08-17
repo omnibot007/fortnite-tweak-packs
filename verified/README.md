@@ -1,11 +1,13 @@
-# Verified tweaks — extracted from the packs
+# Verified tweaks — extracted from the packs + MaxxTopia catalog
 
-These are the only changes from the tweak packs that are both **real** and **safe**.
-Extracted here as clean, commented .reg files so you can apply them individually
-without running the dangerous pack files (especially the Aphrodite .bat files,
-which download unsigned executables from Discord CDN).
+These are tweaks that are both **real** and **safe**. The first 7 were extracted
+from the tweak packs (audited in `../AUDIT.md`). The remaining 2 were sourced
+from MaxxTopia's independent efficacy catalog (100 tweaks, 16 measured-tier)
+because the packs themselves are exhausted — only 6 good tweaks from 36 files.
 
 ## Files
+
+### From the packs
 
 | File | What it does | Source | Revert |
 |---|---|---|---|
@@ -17,12 +19,49 @@ which download unsigned executables from Discord CDN).
 | `gamebar-off.reg` | Disables Xbox Game Bar overlay. Pairs with gamedvr-off.reg. | Aphrodite .bat (extracted) | Set `UseNexusForGameBarEnabled` back to `1` |
 | `accessibility-shortcuts-off.reg` | Disables StickyKeys/ToggleKeys/FilterKeys shortcuts. Prevents match-ending input interruptions. | Aphrodite .bat (extracted) | See file comments for per-key revert values |
 
+### From MaxxTopia catalog (packs exhausted, pulling from independent audit)
+
+| File | What it does | Source | Revert |
+|---|---|---|---|
+| `usb-power-mgmt-off.reg` | Disables USB selective-suspend. Removes 1-3ms wake stalls when USB controller needed mid-frame. | MaxxTopia `process.usb-power-mgmt.disable` (mechanism tier) | Delete `EnhancedPowerManagementEnabled` value |
+| `hid-power-mgmt-off.reg` | Disables HID power management for mouse/keyboard/controllers. Companion to USB tweak. | MaxxTopia `process.hid-power-mgmt.disable` (mechanism tier) | Delete `EnhancedPowerManagementEnabled` value |
+
+## Already applied on this machine (no .reg needed)
+
+These MaxxTopia measured-tier tweaks were verified as already set:
+
+| Tweak | MaxxTopia ID | Current value | How it got set |
+|---|---|---|---|
+| Mouse acceleration off | `ui.mouse.disable-acceleration` | `MouseSpeed=0, MouseThreshold1=0, MouseThreshold2=0` | Already off (user setting) |
+| Fortnite priority High | `process.fortnite.priority-high` | `CpuPriorityClass=3, IoPriority=3` | IFEO entry already exists |
+| MSI mode on GPU | `process.msi-mode.gpu-nic-audio` | `MSISupported=1` on Quadro T1000 | Already set by driver |
+| MSI mode on Wi-Fi | same | `MSISupported=1` on AX201 | Already set by driver |
+| MSI mode on Ethernet | same | `MSISupported=1` on I219-V | Already set by driver |
+| Audio ducking off | `audio.comms-ducking.disable` | `UserDuckingPreference=3` | Applied via this repo |
+| StickyKeys off | `ui.sticky-keys.disable` | `Flags=506` | Applied via this repo |
+| Power throttling off | `process.power-throttling.disable` | `PowerThrottlingOff=1` | Applied via this repo |
+| Fast Startup off | `power.fast-startup.disable` | (pending) | Extracted, not yet applied |
+| GameDVR off | `ui.gamedvr.disable` | `GameDVR_Enabled=0` | Already in latency-tweaks repo |
+
+## Not applicable to this machine
+
+| Tweak | MaxxTopia ID | Why not |
+|---|---|---|
+| Maximize display refresh rate | `display.refresh.maximize` | Panel is 60Hz — already at max |
+| NIC EEE / Green Ethernet off | `net.nic.eee-powersave.disable` | Intel AX201 Wi-Fi doesn't expose EEE properties (EEE is a wired Ethernet feature) |
+| RGB control apps autostart disable | `peripherals.rgb-control-apps.autostart-disable` | ThinkPad has no RGB lighting |
+| NVIDIA Profile Inspector profile | `nvidia.nvpi.fortnite-profile` | Requires NVPI tool, not a .reg file |
+| Audio sample rate 48kHz | `audio.sample-rate.match` | Advisory only — must be set in Sound control panel (Playback > Properties > Advanced > 24-bit 48000 Hz). Cannot be set via .reg. |
+| CS2 autoexec | `cs2.autoexec.optimize` | Not Fortnite |
+| Apex videoconfig | `apex.videoconfig.optimize` | Not Fortnite |
+
 ## Usage
 
 Double-click any .reg file to apply. Admin required for HKLM keys
-(`power-throttling-off.reg`, `gamedvr-off.reg`, `fast-startup-off.reg`).
-No reboot required for any of these except `fast-startup-off.reg` (takes effect
-on next boot).
+(`power-throttling-off.reg`, `gamedvr-off.reg`, `fast-startup-off.reg`,
+`usb-power-mgmt-off.reg`, `hid-power-mgmt-off.reg`).
+Reboot required for `fast-startup-off.reg`, `usb-power-mgmt-off.reg`,
+`hid-power-mgmt-off.reg`.
 
 Or via command line:
 ```cmd
@@ -33,24 +72,20 @@ reg import gamedvr-off.reg
 reg import fast-startup-off.reg
 reg import gamebar-off.reg
 reg import accessibility-shortcuts-off.reg
+reg import usb-power-mgmt-off.reg
+reg import hid-power-mgmt-off.reg
 ```
 
-## Why only 7 files?
+## How we got here
 
-The audit (see `../AUDIT.md`) reviewed all 36 files across 4 packs and found:
-- 2 were GOOD (real + safe) — initially extracted
-- 10 were MARGINAL (real but tiny effect)
-- 14 were PLACEBO (no mechanism)
-- 9 were HARMFUL (security reduction or damage)
-- 2 were UNAUDITABLE (binary/obfuscated)
+1. **Audited all 36 files** across 4 tweak packs (Aphrodite, Peterbot, ReduceInputDelay, BloomReducer). See `../AUDIT.md`.
+2. **Extracted 7 good tweaks** from the packs as clean .reg files. The packs are 5.6% good by file count, but the Aphrodite .bat files contained 4 more good tweaks buried among malware downloads and harmful changes.
+3. **Exhausted the packs** — no more good tweaks to extract from them.
+4. **Pulled from MaxxTopia's catalog** (100 tweaks, 16 measured-tier) to find additional good tweaks not in the packs.
+5. **Verified current machine state** — most MaxxTopia measured-tier tweaks are already applied. Only USB and HID power management were not set.
+6. **Created 2 more .reg files** from MaxxTopia's catalog.
 
-The initial extraction found 2 GOOD tweaks. A deeper read of the Aphrodite
-Aim Assist .bat (748 lines, ~300+ registry changes) surfaced 4 more good
-tweaks buried among the malware download and harmful changes. These are
-extracted here as clean .reg files — **do not run the Aphrodite .bat files
-to get these tweaks.** The .bat files download `dmv.exe` and `PowerRun.exe`
-from Discord CDN. `PowerRun.exe` runs processes with SYSTEM privileges.
-This is malware delivery behavior.
+Total: **9 verified .reg files** (7 from packs + 2 from MaxxTopia).
 
 ## What about the Aphrodite .bat files?
 
@@ -67,23 +102,3 @@ This is malware delivery behavior.
 
 The good tweaks from the Aphrodite .bat are extracted in this folder.
 There is no reason to ever run the .bat files themselves.
-
-## What was NOT extracted (and why)
-
-| Tweak | In Aphrodite .bat | Why not extracted |
-|---|---|---|
-| `Win32PrioritySeparation=38` | Yes | That's the **stock** Windows value. Not a tweak. |
-| `NetworkThrottlingIndex=0xffffffff` | Yes | Only affects MMCSS-registered threads. Fortnite doesn't use MMCSS. Placebo. |
-| `GPU Priority=8` | Yes | Not a real DXGK scheduling knob. Folklore per MaxxTopia audit. |
-| TCP DelayedAck / CongestionAlgorithm / AFD buffers | Yes | TCP-only. Fortnite gameplay is UDP. Doesn't affect in-match ping. |
-| TCP ServiceProvider priorities | Yes | DNS resolution ordering. Minimal effect on game ping. |
-| `FeatureSettingsOverride=3` | Yes | Disables Spectre/Meltdown mitigations. Security reduction. |
-| `EnableLUA=0` | Yes | Disables UAC entirely. Major security risk. |
-| `EnablePrefetcher=0` | Yes | Disables Prefetcher. Can slow app launches. Not game performance. |
-| `MaintenanceDisabled=1` | Yes | Windows already defers maintenance when gaming. Marginal. |
-| Webcam/mic deny for UWP apps | Yes | Privacy, not performance. ~30 registry changes for this alone. |
-| Narrator/accessibility disable | Yes | Most are QoL, not performance. Only the shortcut keys were extracted. |
-| DWM accent color changes | Yes | Changes Windows theme colors. Not performance. |
-| Push notifications off | Yes | QoL, not performance. |
-| Remote Assistance off | Yes | Security, not performance. |
-| OneDrive uninstall | Yes | Destructive, not performance. |
